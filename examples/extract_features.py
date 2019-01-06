@@ -28,7 +28,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 
-from pytorch_pretrained_bert.tokenization import convert_to_unicode, BertTokenizer
+from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.modeling import BertModel
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s', 
@@ -168,9 +168,9 @@ def read_examples(input_file):
     """Read a list of `InputExample`s from an input file."""
     examples = []
     unique_id = 0
-    with open(input_file, "r") as reader:
+    with open(input_file, "r", encoding='utf-8') as reader:
         while True:
-            line = convert_to_unicode(reader.readline())
+            line = reader.readline()
             if not line:
                 break
             line = line.strip()
@@ -199,6 +199,7 @@ def main():
                              "bert-large-uncased, bert-base-cased, bert-base-multilingual, bert-base-chinese.")
 
     ## Other parameters
+    parser.add_argument("--do_lower_case", default=False, action='store_true', help="Set this flag if you are using an uncased model.")
     parser.add_argument("--layers", default="-1,-2,-3,-4", type=str)
     parser.add_argument("--max_seq_length", default=128, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences longer "
@@ -227,7 +228,7 @@ def main():
 
     layer_indexes = [int(x) for x in args.layers.split(",")]
 
-    tokenizer = BertTokenizer.from_pretrained(args.bert_model)
+    tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
 
     examples = read_examples(args.input_file)
 
