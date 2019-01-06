@@ -52,15 +52,19 @@ model = BertForMaskedLM.from_pretrained(model_name)
 model.cuda()
 model.eval()
 
+count = 0
 while True:
     # Predict all tokens
+    count += 1
     predictions = model(tokens_tensor.cuda(), segments_tensors.cuda())
     predictions = predictions.cpu()
-    print(predictions.shape)
+    # print(predictions.shape)
     # confirm we were able to predict 'henson'
     predicted_index = torch.argmax(predictions[0, masked_index]).item()
     predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
-    print(predicted_token)
+    if count % 20 == 0:
+        print(count)
+        print(predicted_token)
     # assert predicted_token[0] == '伞'
     # predicted_index = torch.argmax(predictions[1, masked_index]).item()
     # predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
