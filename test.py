@@ -1,6 +1,8 @@
 import torch
 from pytorch_pretrained_bert import BertTokenizer, BertModel, BertForMaskedLM
 
+torch.cuda.set_device(0)
+
 model_name = 'bert-base-chinese'
 # model_name = '/Users/quantum/.pytorch_pretrained_bert/' \
 #              '8a0c070123c1f794c42a29c6904beb7c1b8715741e235bee04aca2c7636fc83f.' \
