@@ -43,7 +43,7 @@ segments_tensors = torch.tensor([segments_ids])
 # BertModel.train()
 model_name = "42d4a64dda3243ffeca7ec268d5544122e67d9d06b971608796b483925716512." \
              "02ac7d664cff08d793eb00d6aac1d04368a1322435e5fe0a27c70b0b3a85327f"
-model = BertModel.from_pretrained(model_name, cache_dir=cache_dir)
+model = BertModel.from_pretrained(os.path.join(cache_dir, model_name))
 
 model.eval()
 
@@ -53,7 +53,7 @@ encoded_layers, _ = model(tokens_tensor, segments_tensors)
 assert len(encoded_layers) == 12
 
 # Load pre-trained model (weights)
-model = BertForMaskedLM.from_pretrained(model_name, cache_dir=cache_dir)
+model = BertForMaskedLM.from_pretrained(os.path.join(cache_dir, model_name))
 model.cuda()
 model.eval()
 
