@@ -31,9 +31,9 @@ from torch.utils.data.distributed import DistributedSampler
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.modeling import BertModel
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s', 
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -199,16 +199,17 @@ def main():
                              "bert-large-uncased, bert-base-cased, bert-base-multilingual, bert-base-chinese.")
 
     ## Other parameters
-    parser.add_argument("--do_lower_case", default=False, action='store_true', help="Set this flag if you are using an uncased model.")
+    parser.add_argument("--do_lower_case", default=False, action='store_true',
+                        help="Set this flag if you are using an uncased model.")
     parser.add_argument("--layers", default="-1,-2,-3,-4", type=str)
     parser.add_argument("--max_seq_length", default=128, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences longer "
-                            "than this will be truncated, and sequences shorter than this will be padded.")
+                             "than this will be truncated, and sequences shorter than this will be padded.")
     parser.add_argument("--batch_size", default=32, type=int, help="Batch size for predictions.")
     parser.add_argument("--local_rank",
                         type=int,
                         default=-1,
-                        help = "local_rank for distributed training on gpus")
+                        help="local_rank for distributed training on gpus")
     parser.add_argument("--no_cuda",
                         default=False,
                         action='store_true',

@@ -1,6 +1,8 @@
 import torch
 from pytorch_pretrained_bert import BertTokenizer, BertModel, BertForMaskedLM
 
+print("GPU Available: ", torch.cuda.is_available())
+print("GPU Count: ", torch.cuda.device_count())
 torch.cuda.set_device(0)
 
 model_name = 'bert-base-chinese'
