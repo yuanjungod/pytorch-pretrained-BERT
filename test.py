@@ -57,11 +57,13 @@ model = BertForMaskedLM.from_pretrained(os.path.join(cache_dir, model_name))
 model.cuda()
 model.eval()
 
+tokens_tensor_gpu = tokens_tensor.cuda()
+segments_tensors_gpu = segments_tensors.cuda()
 count = 0
 while True:
     # Predict all tokens
     count += 1
-    predictions = model(tokens_tensor.cuda(), segments_tensors.cuda())
+    predictions = model(tokens_tensor_gpu, segments_tensors_gpu)
     # predictions = predictions.cpu()
     # print(predictions.shape)
     # confirm we were able to predict 'henson'
