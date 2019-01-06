@@ -1,5 +1,6 @@
 import torch
 from pytorch_pretrained_bert import BertTokenizer, BertModel, BertForMaskedLM
+import os
 
 print("GPU Available: ", torch.cuda.is_available())
 print("GPU Count: ", torch.cuda.device_count())
@@ -14,7 +15,8 @@ cache_dir = "/home/yuanjun/.pytorch_pretrained_bert"
 #              '9b42061518a39ca00b8b52059fd2bede8daa613f8a8671500e518a8c29de8c00'
 # Load pre-trained model tokenizer (vocabulary)
 
-tokenizer = BertTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+# tokenizer = BertTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+tokenizer = BertTokenizer.from_pretrained(os.path.join(cache_dir, model_name))
 
 # Tokenized input
 tokenized_text = "外面在下雨。出门带伞。"
