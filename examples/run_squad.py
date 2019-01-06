@@ -39,9 +39,9 @@ from pytorch_pretrained_bert.modeling import BertForQuestionAnswering
 from pytorch_pretrained_bert.optimization import BertAdam
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -669,9 +669,10 @@ def _compute_softmax(scores):
         probs.append(score / total_sum)
     return probs
 
+
 def warmup_linear(x, warmup=0.002):
     if x < warmup:
-        return x/warmup
+        return x / warmup
     return 1.0 - x
 
 
@@ -800,7 +801,8 @@ def main():
 
     # Prepare model
     model = BertForQuestionAnswering.from_pretrained(args.bert_model,
-                cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank))
+                                                     cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(
+                                                         args.local_rank))
 
     if args.fp16:
         model.half()
@@ -809,7 +811,8 @@ def main():
         try:
             from apex.parallel import DistributedDataParallel as DDP
         except ImportError:
-            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+            raise ImportError(
+                "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
 
         model = DDP(model)
     elif n_gpu > 1:
@@ -826,7 +829,7 @@ def main():
     optimizer_grouped_parameters = [
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
+    ]
 
     t_total = num_train_steps
     if args.local_rank != -1:
@@ -836,7 +839,8 @@ def main():
             from apex.optimizers import FP16_Optimizer
             from apex.optimizers import FusedAdam
         except ImportError:
-            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+            raise ImportError(
+                "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
 
         optimizer = FusedAdam(optimizer_grouped_parameters,
                               lr=args.learning_rate,
@@ -854,7 +858,7 @@ def main():
 
     global_step = 0
     if args.do_train:
-        cached_train_features_file = args.train_file+'_{0}_{1}_{2}_{3}'.format(
+        cached_train_features_file = args.train_file + '_{0}_{1}_{2}_{3}'.format(
             args.bert_model, str(args.max_seq_length), str(args.doc_stride), str(args.max_query_length))
         train_features = None
         try:
@@ -898,7 +902,7 @@ def main():
                 input_ids, input_mask, segment_ids, start_positions, end_positions = batch
                 loss = model(input_ids, segment_ids, input_mask, start_positions, end_positions)
                 if n_gpu > 1:
-                    loss = loss.mean() # mean() to average on multi-gpu.
+                    loss = loss.mean()  # mean() to average on multi-gpu.
                 if args.gradient_accumulation_steps > 1:
                     loss = loss / args.gradient_accumulation_steps
 
@@ -908,7 +912,7 @@ def main():
                     loss.backward()
                 if (step + 1) % args.gradient_accumulation_steps == 0:
                     # modify learning rate with special warm up BERT uses
-                    lr_this_step = args.learning_rate * warmup_linear(global_step/t_total, args.warmup_proportion)
+                    lr_this_step = args.learning_rate * warmup_linear(global_step / t_total, args.warmup_proportion)
                     for param_group in optimizer.param_groups:
                         param_group['lr'] = lr_this_step
                     optimizer.step()

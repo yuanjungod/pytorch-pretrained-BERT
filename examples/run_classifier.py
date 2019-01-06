@@ -37,9 +37,9 @@ from pytorch_pretrained_bert.optimization import BertAdam
 
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
@@ -199,7 +199,7 @@ class ColaProcessor(DataProcessor):
 def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer):
     """Loads a data file into a list of `InputBatch`s."""
 
-    label_map = {label : i for i, label in enumerate(label_list)}
+    label_map = {label: i for i, label in enumerate(label_list)}
 
     features = []
     for (ex_index, example) in enumerate(examples):
@@ -263,7 +263,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length, tokenizer
             logger.info("*** Example ***")
             logger.info("guid: %s" % (example.guid))
             logger.info("tokens: %s" % " ".join(
-                    [str(x) for x in tokens]))
+                [str(x) for x in tokens]))
             logger.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
             logger.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
             logger.info(
@@ -299,9 +299,10 @@ def accuracy(out, labels):
     outputs = np.argmax(out, axis=1)
     return np.sum(outputs == labels)
 
+
 def warmup_linear(x, warmup=0.002):
     if x < warmup:
-        return x/warmup
+        return x / warmup
     return 1.0 - x
 
 
@@ -459,8 +460,9 @@ def main():
 
     # Prepare model
     model = BertForSequenceClassification.from_pretrained(args.bert_model,
-              cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(args.local_rank),
-              num_labels = num_labels)
+                                                          cache_dir=PYTORCH_PRETRAINED_BERT_CACHE / 'distributed_{}'.format(
+                                                              args.local_rank),
+                                                          num_labels=num_labels)
     if args.fp16:
         model.half()
     model.to(device)
@@ -468,7 +470,8 @@ def main():
         try:
             from apex.parallel import DistributedDataParallel as DDP
         except ImportError:
-            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+            raise ImportError(
+                "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
 
         model = DDP(model)
     elif n_gpu > 1:
@@ -480,7 +483,7 @@ def main():
     optimizer_grouped_parameters = [
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
+    ]
     t_total = num_train_steps
     if args.local_rank != -1:
         t_total = t_total // torch.distributed.get_world_size()
@@ -489,7 +492,8 @@ def main():
             from apex.optimizers import FP16_Optimizer
             from apex.optimizers import FusedAdam
         except ImportError:
-            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+            raise ImportError(
+                "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
 
         optimizer = FusedAdam(optimizer_grouped_parameters,
                               lr=args.learning_rate,
@@ -534,7 +538,7 @@ def main():
                 input_ids, input_mask, segment_ids, label_ids = batch
                 loss = model(input_ids, segment_ids, input_mask, label_ids)
                 if n_gpu > 1:
-                    loss = loss.mean() # mean() to average on multi-gpu.
+                    loss = loss.mean()  # mean() to average on multi-gpu.
                 if args.gradient_accumulation_steps > 1:
                     loss = loss / args.gradient_accumulation_steps
 
@@ -548,7 +552,7 @@ def main():
                 nb_tr_steps += 1
                 if (step + 1) % args.gradient_accumulation_steps == 0:
                     # modify learning rate with special warm up BERT uses
-                    lr_this_step = args.learning_rate * warmup_linear(global_step/t_total, args.warmup_proportion)
+                    lr_this_step = args.learning_rate * warmup_linear(global_step / t_total, args.warmup_proportion)
                     for param_group in optimizer.param_groups:
                         param_group['lr'] = lr_this_step
                     optimizer.step()

@@ -6,6 +6,7 @@ model_name = 'bert-base-chinese'
 #              '8a0c070123c1f794c42a29c6904beb7c1b8715741e235bee04aca2c7636fc83f.' \
 #              '9b42061518a39ca00b8b52059fd2bede8daa613f8a8671500e518a8c29de8c00'
 # Load pre-trained model tokenizer (vocabulary)
+
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
 # Tokenized input
@@ -43,14 +44,15 @@ assert len(encoded_layers) == 12
 model = BertForMaskedLM.from_pretrained(model_name)
 model.eval()
 
-# Predict all tokens
-predictions = model(tokens_tensor, segments_tensors)
-print(predictions.shape)
-# confirm we were able to predict 'henson'
-predicted_index = torch.argmax(predictions[0, masked_index]).item()
-predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
-print(predicted_token)
-# assert predicted_token[0] == '伞'
-predicted_index = torch.argmax(predictions[1, masked_index]).item()
-predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
-print(predicted_token)
+while True:
+    # Predict all tokens
+    predictions = model(tokens_tensor, segments_tensors)
+    print(predictions.shape)
+    # confirm we were able to predict 'henson'
+    predicted_index = torch.argmax(predictions[0, masked_index]).item()
+    predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
+    print(predicted_token)
+    # assert predicted_token[0] == '伞'
+    # predicted_index = torch.argmax(predictions[1, masked_index]).item()
+    # predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
+    # print(predicted_token)
