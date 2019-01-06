@@ -37,6 +37,7 @@ segments_tensors = torch.tensor([segments_ids])
 # "bert-base-chinese"
 # BertModel.train()
 model = BertModel.from_pretrained(model_name)
+
 model.eval()
 
 # Predict hidden states features for each layer
@@ -46,11 +47,13 @@ assert len(encoded_layers) == 12
 
 # Load pre-trained model (weights)
 model = BertForMaskedLM.from_pretrained(model_name)
+model.cuda()
 model.eval()
 
 while True:
     # Predict all tokens
-    predictions = model(tokens_tensor, segments_tensors)
+    predictions = model(tokens_tensor.cuda(), segments_tensors.cuda())
+    predictions = predictions.cpu()
     print(predictions.shape)
     # confirm we were able to predict 'henson'
     predicted_index = torch.argmax(predictions[0, masked_index]).item()
