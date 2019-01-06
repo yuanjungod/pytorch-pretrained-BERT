@@ -1,6 +1,7 @@
 import torch
 from pytorch_pretrained_bert import BertTokenizer, BertModel, BertForMaskedLM
 import os
+import time
 
 print("GPU Available: ", torch.cuda.is_available())
 print("GPU Count: ", torch.cuda.device_count())
@@ -59,6 +60,7 @@ model.eval()
 
 tokens_tensor_gpu = tokens_tensor.cuda()
 segments_tensors_gpu = segments_tensors.cuda()
+start = time.time()
 count = 0
 while True:
     # Predict all tokens
@@ -70,7 +72,7 @@ while True:
     # predicted_index = torch.argmax(predictions[0, masked_index]).item()
     # predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
     if count % 100 == 0:
-        print(count)
+        print(count, count/(time.time()-start))
         # print(predicted_token)
     # assert predicted_token[0] == '伞'
     # predicted_index = torch.argmax(predictions[1, masked_index]).item()
