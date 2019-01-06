@@ -36,9 +36,9 @@ from pytorch_pretrained_bert.tokenization import printable_text, whitespace_toke
 from pytorch_pretrained_bert.modeling import BertForQuestionAnswering
 from pytorch_pretrained_bert.optimization import BertAdam
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s', 
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -158,7 +158,7 @@ def read_squad_examples(input_file, is_training):
                         whitespace_tokenize(orig_answer_text))
                     if actual_text.find(cleaned_answer_text) == -1:
                         logger.warning("Could not find answer: '%s' vs. '%s'",
-                                           actual_text, cleaned_answer_text)
+                                       actual_text, cleaned_answer_text)
                         continue
 
                 example = SquadExample(
@@ -399,7 +399,6 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
     return cur_span_index == best_span_index
 
 
-
 RawResult = collections.namedtuple("RawResult",
                                    ["unique_id", "start_logits", "end_logits"])
 
@@ -599,7 +598,7 @@ def get_final_text(pred_text, orig_text, do_lower_case, verbose_logging=False):
     if len(orig_ns_text) != len(tok_ns_text):
         if verbose_logging:
             logger.info("Length not equal after stripping spaces: '%s' vs '%s'",
-                            orig_ns_text, tok_ns_text)
+                        orig_ns_text, tok_ns_text)
         return orig_text
 
     # We then project the characters in `pred_text` back to `orig_text` using
@@ -668,6 +667,7 @@ def _compute_softmax(scores):
         probs.append(score / total_sum)
     return probs
 
+
 def copy_optimizer_params_to_model(named_params_model, named_params_optimizer):
     """ Utility function for optimize_on_cpu and 16-bits training.
         Copy the parameters optimized on CPU/RAM back to the model on GPU
@@ -677,6 +677,7 @@ def copy_optimizer_params_to_model(named_params_model, named_params_optimizer):
             logger.error("name_opti != name_model: {} {}".format(name_opti, name_model))
             raise ValueError
         param_model.data.copy_(param_opti.data)
+
 
 def set_optimizer_params_grad(named_params_optimizer, named_params_model, test_nan=False):
     """ Utility function for optimize_on_cpu and 16-bits training.
@@ -696,6 +697,7 @@ def set_optimizer_params_grad(named_params_optimizer, named_params_model, test_n
         else:
             param_opti.grad = None
     return is_nan
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -742,8 +744,8 @@ def main():
                         default=False,
                         action='store_true',
                         help="Whether not to use CUDA when available")
-    parser.add_argument('--seed', 
-                        type=int, 
+    parser.add_argument('--seed',
+                        type=int,
                         default=42,
                         help="random seed for initialization")
     parser.add_argument('--gradient_accumulation_steps',
@@ -778,13 +780,13 @@ def main():
         torch.distributed.init_process_group(backend='nccl')
         if args.fp16:
             logger.info("16-bits training currently not supported in distributed training")
-            args.fp16 = False # (see https://github.com/pytorch/pytorch/pull/13496)
+            args.fp16 = False  # (see https://github.com/pytorch/pytorch/pull/13496)
     logger.info("device: {} n_gpu: {}, distributed training: {}, 16-bits trainiing: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
     if args.gradient_accumulation_steps < 1:
         raise ValueError("Invalid gradient_accumulation_steps parameter: {}, should be >= 1".format(
-                            args.gradient_accumulation_steps))
+            args.gradient_accumulation_steps))
 
     args.train_batch_size = int(args.train_batch_size / args.gradient_accumulation_steps)
 
@@ -834,17 +836,17 @@ def main():
     # Prepare optimizer
     if args.fp16:
         param_optimizer = [(n, param.clone().detach().to('cpu').float().requires_grad_()) \
-                            for n, param in model.named_parameters()]
+                           for n, param in model.named_parameters()]
     elif args.optimize_on_cpu:
         param_optimizer = [(n, param.clone().detach().to('cpu').requires_grad_()) \
-                            for n, param in model.named_parameters()]
+                           for n, param in model.named_parameters()]
     else:
         param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'gamma', 'beta']
     optimizer_grouped_parameters = [
         {'params': [p for n, p in param_optimizer if n not in no_decay], 'weight_decay_rate': 0.01},
         {'params': [p for n, p in param_optimizer if n in no_decay], 'weight_decay_rate': 0.0}
-        ]
+    ]
     optimizer = BertAdam(optimizer_grouped_parameters,
                          lr=args.learning_rate,
                          warmup=args.warmup_proportion,
@@ -881,11 +883,11 @@ def main():
         for _ in trange(int(args.num_train_epochs), desc="Epoch"):
             for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
                 if n_gpu == 1:
-                    batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
+                    batch = tuple(t.to(device) for t in batch)  # multi-gpu does scattering it-self
                 input_ids, input_mask, segment_ids, start_positions, end_positions = batch
                 loss = model(input_ids, segment_ids, input_mask, start_positions, end_positions)
                 if n_gpu > 1:
-                    loss = loss.mean() # mean() to average on multi-gpu.
+                    loss = loss.mean()  # mean() to average on multi-gpu.
                 if args.fp16 and args.loss_scale != 1.0:
                     # rescale loss for fp16 training
                     # see https://docs.nvidia.com/deeplearning/sdk/mixed-precision-training/index.html
