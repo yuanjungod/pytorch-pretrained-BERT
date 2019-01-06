@@ -6,8 +6,7 @@ print("GPU Count: ", torch.cuda.device_count())
 torch.cuda.set_device(0)
 
 # model_name = 'bert-base-chinese'
-model_name = "/home/yuanjun/.pytorch_pretrained_bert/42d4a64dda3243ffeca7ec268d5544122e67d9d06b971608796b48392" \
-             "5716512.02ac7d664cff08d793eb00d6aac1d04368a1322435e5fe0a27c70b0b3a85327f"
+model_name = "/home/yuanjun/.pytorch_pretrained_bert"
 # model_name = '/Users/quantum/.pytorch_pretrained_bert/' \
 #              '8a0c070123c1f794c42a29c6904beb7c1b8715741e235bee04aca2c7636fc83f.' \
 #              '9b42061518a39ca00b8b52059fd2bede8daa613f8a8671500e518a8c29de8c00'
