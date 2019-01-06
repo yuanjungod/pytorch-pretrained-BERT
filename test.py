@@ -5,7 +5,9 @@ print("GPU Available: ", torch.cuda.is_available())
 print("GPU Count: ", torch.cuda.device_count())
 torch.cuda.set_device(0)
 
-model_name = 'bert-base-chinese'
+# model_name = 'bert-base-chinese'
+model_name = '8a0c070123c1f794c42a29c6904beb7c1b8715741e235bee04aca2c7636fc83f.' \
+             '9b42061518a39ca00b8b52059fd2bede8daa613f8a8671500e518a8c29de8c00'
 cache_dir = "/home/yuanjun/.pytorch_pretrained_bert"
 # model_name = '/Users/quantum/.pytorch_pretrained_bert/' \
 #              '8a0c070123c1f794c42a29c6904beb7c1b8715741e235bee04aca2c7636fc83f.' \
