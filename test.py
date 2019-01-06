@@ -37,6 +37,8 @@ segments_tensors = torch.tensor([segments_ids])
 # Load pre-trained model (weights)
 # "bert-base-chinese"
 # BertModel.train()
+model_name = "42d4a64dda3243ffeca7ec268d5544122e67d9d06b971608796b483925716512." \
+             "02ac7d664cff08d793eb00d6aac1d04368a1322435e5fe0a27c70b0b3a85327f"
 model = BertModel.from_pretrained(model_name, cache_dir=cache_dir)
 
 model.eval()
