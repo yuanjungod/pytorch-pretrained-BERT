@@ -37,7 +37,7 @@ segments_tensors = torch.tensor([segments_ids])
 # Load pre-trained model (weights)
 # "bert-base-chinese"
 # BertModel.train()
-model = BertModel.from_pretrained(model_name)
+model = BertModel.from_pretrained(model_name, cache_dir=cache_dir)
 
 model.eval()
 
@@ -47,7 +47,7 @@ encoded_layers, _ = model(tokens_tensor, segments_tensors)
 assert len(encoded_layers) == 12
 
 # Load pre-trained model (weights)
-model = BertForMaskedLM.from_pretrained(model_name)
+model = BertForMaskedLM.from_pretrained(model_name, cache_dir=cache_dir)
 model.cuda()
 model.eval()
 
