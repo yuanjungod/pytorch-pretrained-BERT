@@ -62,7 +62,7 @@ while True:
     # confirm we were able to predict 'henson'
     predicted_index = torch.argmax(predictions[0, masked_index]).item()
     predicted_token = tokenizer.convert_ids_to_tokens([predicted_index])
-    if count % 20 == 0:
+    if count % 100 == 0:
         print(count)
         print(predicted_token)
     # assert predicted_token[0] == '伞'
