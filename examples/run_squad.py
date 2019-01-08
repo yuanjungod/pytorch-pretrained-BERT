@@ -67,14 +67,14 @@ class SquadExample(object):
 
     def __repr__(self):
         s = ""
-        s += "qas_id: %s" % (self.qas_id)
+        s += "qas_id: %s" % self.qas_id
         s += ", question_text: %s" % (
             self.question_text)
         s += ", doc_tokens: [%s]" % (" ".join(self.doc_tokens))
         if self.start_position:
-            s += ", start_position: %d" % (self.start_position)
+            s += ", start_position: %d" % self.start_position
         if self.start_position:
-            s += ", end_position: %d" % (self.end_position)
+            s += ", end_position: %d" % self.end_position
         return s
 
 
@@ -142,6 +142,7 @@ def read_squad_examples(input_file, is_training):
                 orig_answer_text = None
                 if is_training:
                     if len(qa["answers"]) != 1:
+                        continue
                         raise ValueError(
                             "For training, each question should have exactly 1 answer.")
                     answer = qa["answers"][0]
@@ -409,8 +410,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
                       max_answer_length, do_lower_case, output_prediction_file,
                       output_nbest_file, verbose_logging):
     """Write final predictions to the json file."""
-    logger.info("Writing predictions to: %s" % (output_prediction_file))
-    logger.info("Writing nbest to: %s" % (output_nbest_file))
+    logger.info("Writing predictions to: %s" % output_prediction_file)
+    logger.info("Writing nbest to: %s" % output_nbest_file)
 
     example_index_to_features = collections.defaultdict(list)
     for feature in all_features:
@@ -679,14 +680,14 @@ def warmup_linear(x, warmup=0.002):
 def main():
     parser = argparse.ArgumentParser()
 
-    ## Required parameters
+    # Required parameters
     parser.add_argument("--bert_model", default=None, type=str, required=True,
                         help="Bert pre-trained model selected in the list: bert-base-uncased, "
                              "bert-large-uncased, bert-base-cased, bert-base-multilingual, bert-base-chinese.")
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model checkpoints and predictions will be written.")
 
-    ## Other parameters
+    # Other parameters
     parser.add_argument("--train_file", default=None, type=str, help="SQuAD json for training. E.g., train-v1.1.json")
     parser.add_argument("--predict_file", default=None, type=str,
                         help="SQuAD json for predictions. E.g., dev-v1.1.json or test-v1.1.json")
