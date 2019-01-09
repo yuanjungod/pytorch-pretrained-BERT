@@ -592,7 +592,7 @@ def main():
                     optimizer.step()
                     optimizer.zero_grad()
                     global_step += 1
-            print("train loss: %s" % tr_loss)
+            print("train loss: %s" % tr_loss/nb_tr_steps)
 
     # Save a trained model
     model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
@@ -600,9 +600,9 @@ def main():
     torch.save(model_to_save.state_dict(), output_model_file)
 
     # Load a trained model that you have fine-tuned
-    model_state_dict = torch.load(output_model_file)
-    model = BertForSequenceClassification.from_pretrained(args.bert_model, state_dict=model_state_dict)
-    model.to(device)
+    # model_state_dict = torch.load(output_model_file)
+    # model = BertForSequenceClassification.from_pretrained(args.bert_model, state_dict=model_state_dict)
+    # model.to(device)
 
     if args.do_eval and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
         eval_examples = processor.get_dev_examples(args.data_dir)
