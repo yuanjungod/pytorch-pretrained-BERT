@@ -439,6 +439,7 @@ def main():
         "cola": 2,
         "mnli": 3,
         "mrpc": 2,
+        "wnli": 2
     }
 
     if args.local_rank == -1 or args.no_cuda:
@@ -563,6 +564,7 @@ def main():
 
         model.train()
         for _ in trange(int(args.num_train_epochs), desc="Epoch"):
+
             tr_loss = 0
             nb_tr_examples, nb_tr_steps = 0, 0
             for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
