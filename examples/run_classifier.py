@@ -592,6 +592,7 @@ def main():
                     optimizer.step()
                     optimizer.zero_grad()
                     global_step += 1
+            print("train loss: %s" % tr_loss)
 
     # Save a trained model
     model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
